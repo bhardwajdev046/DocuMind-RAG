@@ -41,3 +41,4 @@ openevals
 
 # tests (CI smoke test before evaluation/build/deploy)
 pytest
+pypdf==6.19.0
