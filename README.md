@@ -1,75 +1,134 @@
-# HR Policy Assistant (RAG)
+# DocuMind-RAG | HR Policy Assistant
 
-A retrieval-augmented generation (RAG) chatbot that answers employee questions about a company's HR policy document. Built with LangChain, Groq-hosted LLMs, Jina embeddings, and a Qdrant Cloud vector store, with input/output safety guardrails and LangSmith tracing.
+An AI-powered HR Policy Assistant built using Retrieval-Augmented Generation (RAG) that helps employees find accurate answers to company HR policy questions.
 
-## How it works
+The application retrieves relevant information from HR policy documents and uses a Groq-hosted LLM to generate context-aware responses. It integrates safety guardrails to screen user queries and generated answers.
 
-1. **Ingest** — `hr_assistant/document_loader.py` loads `data/hr_policy.txt`, and `hr_assistant/splitter.py` splits it into chunks (`CHUNK_SIZE=500`, `CHUNK_OVERLAP=60`).
-2. **Embed & store** — `hr_assistant/embeddings.py` creates embeddings with Jina (`jina-embeddings-v2-base-en`), and `hr_assistant/vector_store.py` uploads/loads them from a Qdrant Cloud collection (reused on subsequent runs instead of re-embedding).
-3. **Retrieve** — `hr_assistant/tools.py` wraps the vector store retriever (top-k = 3) as a `search_hr_policy` tool.
-4. **Agent** — `hr_assistant/agent.py` builds a LangChain agent (`openai/gpt-oss-20b` via Groq) that calls the search tool to ground its answers.
-5. **Guardrails** — `hr_assistant/guardrails.py` runs a separate Groq safety model (`openai/gpt-oss-safeguard-20b`) to screen both the incoming question (prompt injection, requests for other employees' data) and the outgoing answer (PII leaks, unauthorized promises, suspicious links) before it reaches the user.
-6. **Everything is wired together** in `hr_assistant/pipeline.py` (`build_hr_assistant()` / `ask()`), used by both entry points below.
+## Overview
 
-## Entry points
+Finding relevant information in lengthy HR policy documents can be time-consuming.
 
-- `python main.py` — CLI demo that asks a few sample HR questions.
-- `streamlit run app.py` — interactive chat UI.
-- `rag.ipynb` — notebook version for experimentation.
+DocuMind-RAG simplifies this process by allowing users to ask questions in natural language and receive answers grounded in the HR policy document.
 
-## Project layout
+## Features
 
+- Retrieval-Augmented Generation (RAG) pipeline
+- PDF/text-based knowledge exploration (verify supported formats)
+- Semantic search using Jina embeddings
+- Context-aware responses using Groq-hosted LLMs
+- Qdrant Cloud vector database integration
+- Input and output safety guardrails
+- Interactive Streamlit chat interface
+- CLI-based interaction
+- LangSmith tracing integration
+
+## Tech Stack
+
+| Component | Technology |
+|---|---|
+| Language | Python |
+| LLM Framework | LangChain |
+| LLM Provider | Groq |
+| Embeddings | Jina |
+| Vector Database | Qdrant Cloud |
+| Frontend | Streamlit |
+| Monitoring | LangSmith |
+
+## Architecture
+
+1. Document Loading
+2. Text Chunking
+3. Embedding Generation
+4. Vector Storage
+5. Semantic Retrieval
+6. LLM-based Answer Generation
+7. Input and Output Safety Validation
+
+## Project Structure
+
+```text
+DocuMind-RAG/
+├── hr_assistant/
+├── data/
+├── docs/
+├── tests/
+├── NOTES/
+├── app.py
+├── main.py
+├── evaluate.py
+├── rag.ipynb
+├── requirements.txt
+├── Dockerfile
+└── docker-compose.yml
 ```
-hr_assistant/
-  config.py          settings, env vars, system prompt
-  document_loader.py load the HR policy text file
-  splitter.py         chunk the document
-  embeddings.py       Jina embeddings model
-  vector_store.py     Qdrant Cloud build/load/retriever
-  tools.py             search tool for the agent
-  llm.py                Groq LLM setup
-  agent.py             LangChain agent construction
-  guardrails.py        input/output safety checks
-  pipeline.py           wires everything together (build_hr_assistant, ask)
-  logger.py             file logging (logs/)
-  tracing.py             LangSmith tracing check
-data/hr_policy.txt      source HR policy document
-docs/                    notes on logging, LangSmith, Qdrant Cloud migration, guardrail attack testing
-NOTES/                   reference PDFs
+
+## Getting Started
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/bhardwajdev046/DocuMind-RAG.git
+cd DocuMind-RAG
 ```
 
-## Setup
+### 2. Create a virtual environment
 
-1. Install [uv](https://github.com/astral-sh/uv):
-   ```
-   pip install uv
-   ```
-2. Create and activate a virtual environment:
-   ```
-   uv venv ragenv
-   ragenv\Scripts\activate
-   ```
-3. Install dependencies:
-   ```
-   uv pip install -r requirements.txt
-   ```
-4. Create a `.env` file with:
-   ```
-   GROQ_API_KEY=...
-   JINA_API_KEY=...
-   QDRANT_URL=...
-   QDRANT_API_KEY=...
-   QDRANT_COLLECTION_NAME=hr_policy
-   LANGSMITH_TRACING=false
-   LANGSMITH_ENDPOINT=...
-   LANGSMITH_API_KEY=...
-   LANGSMITH_PROJECT=...
-   ```
-
-## Git basics
-
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
 ```
-git add .
-git commit -m "Some message"
-git push
+
+### 3. Install dependencies
+
+```bash
+pip install -r requirements.txt
 ```
+
+### 4. Configure environment variables
+
+Create a `.env` file in the project root.
+
+Add the required API keys and configuration:
+
+```env
+GROQ_API_KEY=
+JINA_API_KEY=
+QDRANT_URL=
+QDRANT_API_KEY=
+QDRANT_COLLECTION_NAME=hr_policy
+LANGSMITH_TRACING=false
+LANGSMITH_ENDPOINT=
+LANGSMITH_API_KEY=
+LANGSMITH_PROJECT=
+```
+
+Never commit your `.env` file or expose API keys publicly.
+
+### 5. Run the application
+
+For the Streamlit interface:
+
+```bash
+streamlit run app.py
+```
+
+For the CLI:
+
+```bash
+python main.py
+```
+
+## Future Improvements
+
+- Support multiple document collections
+- Add document upload functionality
+- Improve retrieval evaluation
+- Add source citations to generated answers
+- Enhance conversation memory
+
+## Acknowledgements
+
+This project was adapted from the original
+[Basic-Rag repository by d-hackmt](https://github.com/d-hackmt/Basic-Rag).
+
+The original repository served as the starting point for this project.
