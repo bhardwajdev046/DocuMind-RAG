@@ -1,68 +1,73 @@
-# DocuMind-RAG | HR Policy Assistant
+# 📄 DocuMind RAG — AI-Powered Document Q&A
 
-An AI-powered HR Policy Assistant built using Retrieval-Augmented Generation (RAG) that helps employees find accurate answers to company HR policy questions.
+DocuMind RAG is an AI-powered document question-answering application built using Retrieval-Augmented Generation (RAG). It allows users to upload PDF documents and ask questions, receiving context-aware answers based on the document's content.
 
-The application retrieves relevant information from HR policy documents and uses a Groq-hosted LLM to generate context-aware responses. It integrates safety guardrails to screen user queries and generated answers.
+The application also includes an HR Policy Assistant for answering questions about HR policies.
 
-## Overview
+## ✨ Features
 
-Finding relevant information in lengthy HR policy documents can be time-consuming.
+- 📄 Upload PDF documents and ask questions.
+- 🔍 Semantic search to retrieve relevant document chunks.
+- 🤖 AI-generated answers grounded in retrieved content.
+- 🏢 Dedicated HR Policy Assistant.
+- 🧠 Local embedding model using Sentence Transformers.
+- ⚡ In-memory vector store for uploaded documents.
+- 💬 Interactive chat interface built with Streamlit.
 
-DocuMind-RAG simplifies this process by allowing users to ask questions in natural language and receive answers grounded in the HR policy document.
+## 🛠️ Tech Stack
 
-## Features
-
-- Retrieval-Augmented Generation (RAG) pipeline
-- PDF/text-based knowledge exploration (verify supported formats)
-- Semantic search using Jina embeddings
-- Context-aware responses using Groq-hosted LLMs
-- Qdrant Cloud vector database integration
-- Input and output safety guardrails
-- Interactive Streamlit chat interface
-- CLI-based interaction
-- LangSmith tracing integration
-
-## Tech Stack
-
-| Component | Technology |
+| Technology | Purpose |
 |---|---|
-| Language | Python |
-| LLM Framework | LangChain |
-| LLM Provider | Groq |
-| Embeddings | Jina |
-| Vector Database | Qdrant Cloud |
-| Frontend | Streamlit |
-| Monitoring | LangSmith |
+| Python | Core application |
+| LangChain | RAG pipeline and agent |
+| Streamlit | Interactive web interface |
+| Groq API | LLM inference |
+| HuggingFace Sentence Transformers | Local text embeddings |
+| InMemoryVectorStore | Temporary document retrieval |
+| Qdrant | HR policy vector storage |
+| PyPDF | PDF text extraction |
 
-## Architecture
-
-1. Document Loading
-2. Text Chunking
-3. Embedding Generation
-4. Vector Storage
-5. Semantic Retrieval
-6. LLM-based Answer Generation
-7. Input and Output Safety Validation
-
-## Project Structure
+## 🏗️ Architecture
 
 ```text
-DocuMind-RAG/
-├── hr_assistant/
-├── data/
-├── docs/
-├── tests/
-├── NOTES/
-├── app.py
-├── main.py
-├── evaluate.py
-├── rag.ipynb
-├── requirements.txt
-├── Dockerfile
-└── docker-compose.yml
+              User
+               |
+               v
+        Streamlit Interface
+               |
+       +-------+--------+
+       |                |
+       v                v
+ HR Policy Mode      PDF Q&A Mode
+       |                |
+       v                v
+ Qdrant Store      Upload PDF
+       |                |
+       |                v
+       |           PDF Extraction
+       |                |
+       |                v
+       |          Text Chunking
+       |                |
+       |                v
+       |         Local Embeddings
+       |                |
+       |                v
+       |        In-Memory Vector DB
+       |                |
+       +-------+--------+
+               |
+               v
+        Semantic Retrieval
+               |
+               v
+           Groq LLM
+               |
+               v
+       Contextual Answer
 ```
 
-## Getting Started
+## ⚙️ Installation & Setup
 
 ### 1. Clone the repository
 
@@ -74,8 +79,19 @@ cd DocuMind-RAG
 ### 2. Create a virtual environment
 
 ```bash
-python3 -m venv .venv
+python -m venv .venv
+```
+
+Activate it:
+
+**Ubuntu/Linux**
+```bash
 source .venv/bin/activate
+```
+
+**Windows**
+```bash
+.venv\Scripts\activate
 ```
 
 ### 3. Install dependencies
@@ -88,47 +104,79 @@ pip install -r requirements.txt
 
 Create a `.env` file in the project root.
 
-Add the required API keys and configuration:
+Add your API credentials:
 
 ```env
-GROQ_API_KEY=
-JINA_API_KEY=
-QDRANT_URL=
-QDRANT_API_KEY=
-QDRANT_COLLECTION_NAME=hr_policy
-LANGSMITH_TRACING=false
-LANGSMITH_ENDPOINT=
-LANGSMITH_API_KEY=
-LANGSMITH_PROJECT=
+GROQ_API_KEY=your_groq_api_key
+JINA_API_KEY=your_jina_api_key
+QDRANT_URL=your_qdrant_url
+QDRANT_API_KEY=your_qdrant_api_key
+PORTKEY_API_KEY=your_portkey_api_key
 ```
 
 Never commit your `.env` file or expose API keys publicly.
 
 ### 5. Run the application
 
-For the Streamlit interface:
-
 ```bash
 streamlit run app.py
 ```
 
-For the CLI:
+Open the local URL displayed in the terminal.
 
-```bash
-python main.py
+## 🚀 How to Use
+
+1. Launch DocuMind RAG.
+2. Select **Chat with PDF** from the sidebar.
+3. Upload a PDF document.
+4. Enter a question related to the document.
+5. Receive an answer based on the retrieved content.
+
+To ask about HR policies, select **HR Policy Assistant**.
+
+## 📂 Project Structure
+
+```text
+DocuMind-RAG/
+│
+├── app.py
+├── requirements.txt
+├── README.md
+├── data/
+│   ├── hr_policy.txt
+│   └── sample.pdf
+│
+└── hr_assistant/
+    ├── agent.py
+    ├── config.py
+    ├── document_loader.py
+    ├── embeddings.py
+    ├── guardrails.py
+    ├── llm.py
+    ├── logger.py
+    ├── pipeline.py
+    ├── splitter.py
+    ├── tools.py
+    ├── tracing.py
+    └── vector_store.py
 ```
 
-## Future Improvements
+## 🔮 Future Enhancements
 
-- Support multiple document collections
-- Add document upload functionality
-- Improve retrieval evaluation
-- Add source citations to generated answers
-- Enhance conversation memory
+- Support multiple PDF uploads.
+- Add conversational memory.
+- Display document page references in answers.
+- Improve retrieval accuracy with hybrid search.
+- Add document history and session management.
+- Deploy the application to a cloud platform.
 
-## Acknowledgements
+## 👨‍💻 Author
 
-This project was adapted from the original
-[Basic-Rag repository by d-hackmt](https://github.com/d-hackmt/Basic-Rag).
+**Dev Bhardwaj**
 
-The original repository served as the starting point for this project.
+- GitHub: [bhardwajdev046](https://github.com/bhardwajdev046)
+- LinkedIn: [Dev Bhardwaj](https://www.linkedin.com/in/dev-bhardwaj-23338a294)
+
+---
+
+Built with Python, LangChain, and RAG.
